@@ -1,7 +1,7 @@
 # hiddenlp.py
 import numpy as np
 
-from utils.bin_num_util import bin_to_num, num_to_bin
+from deletion_utils.bin_num_util import bin_to_num, num_to_bin
 
 from pulp import *
 

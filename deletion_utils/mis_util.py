@@ -1,6 +1,6 @@
 # mis_util.py
 import numpy as np
-from bin_num_util import (
+from deletion_utils.bin_num_util import (
     bin_to_num, num_to_bin, v_bin_to_num, v_num_to_bin, get_binary_array)
 
 

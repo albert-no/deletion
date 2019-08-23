@@ -2,8 +2,8 @@
 import numpy as np
 import pandas as pd
 
-from utils.bin_num_util import bin_to_num, num_to_bin
-from utils.mis_util import get_hidden_weight_matrix, edges_from_vertex
+from deletion_utils.bin_num_util import bin_to_num, num_to_bin
+from deletion_utils.mis_util import get_hidden_weight_matrix, edges_from_vertex
 
 from pulp import *
 

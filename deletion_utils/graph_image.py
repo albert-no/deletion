@@ -3,7 +3,7 @@
 import numpy as np
 from PIL import Image
 from matplotlib import pylab as pt
-from mis_util import *
+from deletion_utils.mis_util import *
 
 def get_s_vector(n):
     prev_s_matrix = [[0], [1]]

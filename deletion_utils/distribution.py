@@ -1,8 +1,8 @@
 # distribution.py
 
 import numpy as np
-from bin_num_util import num_to_bin, v_num_to_bin
-from mis_util import compute_vt_sum ,v_compute_vt_sum, get_vt0
+from deletion_utils.bin_num_util import num_to_bin, v_num_to_bin
+from deletion_utils.mis_util import compute_vt_sum ,v_compute_vt_sum, get_vt0
 
 sol_fname_template = '../sols/sols-{}.txt'
 np.set_printoptions(linewidth=100)
