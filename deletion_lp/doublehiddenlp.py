@@ -2,6 +2,7 @@
 import numpy as np
 
 from deletion_utils.bin_num_util import bin_to_num, num_to_bin
+from deletion_utils.mis_util import *
 
 from pulp import *
 
@@ -22,25 +23,18 @@ def hidden_lp(n, verbose=False, binary=False):
 
     model += (pulp.lpSum(V))
     
-    for x in range(0, n_minus_power):
-        bin_str = num_to_bin(x, n-1)
-        edge_list = []
-        for idx in range(n):
-            for bit in ['0', '1']:
-                bin_added = bin_str[:idx] + bit + bin_str[idx:]
-                num_added = bin_to_num(bin_added)
-                if num_added not in edge_list:
-                    edge_list.append(num_added)
+    hidden_weight = get_hidden_weight_matrix(n)
+    for col_idx in range(0, n_minus_power):
+        col = hidden_weight[:, col_idx]
+        edge_list = np.where(col>0)[0]
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
-    for x in range(0, n_plus_power):
-        bin_str = num_to_bin(x, n+1)
-        edge_list = []
-        for idx in range(n+1):
-            bin_removed = bin_str[:idx] + bin_str[idx+1:]
-            num_removed = bin_to_num(bin_removed)
-            if num_removed not in edge_list:
-                edge_list.append(num_removed)
+
+    hidden_weight = get_hidden_weight_matrix(n+1)
+    for row_idx in range(0, n_plus_power):
+        row = hidden_weight[row_idx, :]
+        edge_list = np.where(row>0)[0]
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
+
     print(f'n = {n}, Solving LP')
     model.solve()
     opt = value(model.objective)
@@ -51,13 +45,13 @@ def hidden_lp(n, verbose=False, binary=False):
             print(v.name, '=', v.varValue)
             cnt += 1
         print(f'number of zeros = {cnt}')
-    with open(fname, 'w') as f:
-        f.write(f'n={n}, opt={opt}\n')
-        for v in model.variables():
-            f.write(f'{v.name}, {v.varValue}\n')
+    # with open(fname, 'w') as f:
+    #     f.write(f'n={n}, opt={opt}\n')
+    #     for v in model.variables():
+    #         f.write(f'{v.name}, {v.varValue}\n')
 
 
 if __name__ == "__main__":
     for binary in [False, True]:
-        for n in range(4, 13):
+        for n in range(4, 10):
             hidden_lp(n, verbose=False, binary=binary)
