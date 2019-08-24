@@ -1,4 +1,4 @@
-# doublehiddenlp.py
+# extendhiddenlp.py
 import numpy as np
 
 from deletion_utils.bin_num_util import bin_to_num, num_to_bin
@@ -24,9 +24,15 @@ def hidden_lp(n, verbose=False, binary=False):
     model += (pulp.lpSum(V))
     
     hidden_weight = get_hidden_weight_matrix(n)
-    for col_idx in range(0, n_minus_power):
+    full_weight = get_weight_matrix(n)
+
+    for col_idx in range(n_minus_power):
         col = hidden_weight[:, col_idx]
-        edge_list = np.where(col>0)[0]
+        edge_list = list(np.where(col>0)[0])
+        for vertex in range(n_power):
+            extract = full_weight[vertex, edge_list]
+            if vertex not in edge_list and sum(extract) == len(extract):
+                edge_list.append(vertex)
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
 
     hidden_weight = get_hidden_weight_matrix(n+1)
@@ -34,6 +40,8 @@ def hidden_lp(n, verbose=False, binary=False):
         row = hidden_weight[row_idx, :]
         edge_list = np.where(row>0)[0]
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
+    model += (V[0]==1)
+    model += (V[n_power-1]==1)
 
     print(f'n = {n}, Solving LP')
     model.solve()

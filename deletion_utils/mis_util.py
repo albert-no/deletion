@@ -27,6 +27,8 @@ def get_hidden_weight_matrix(n, normalize=False, transpose=False):
 def get_weight_matrix(n, normalize=False):
     hidden_weight_matrix = get_hidden_weight_matrix(n, normalize)
     weight_matrix = hidden_weight_matrix.dot(hidden_weight_matrix.T)
+    np.fill_diagonal(weight_matrix, 0)
+    weight_matrix[np.where(weight_matrix>0)] = 1
     return weight_matrix
 
 
