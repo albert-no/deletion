@@ -32,13 +32,19 @@ def hidden_lp(n, verbose=False, binary=False):
         for vertex in range(n_power):
             extract = full_weight[vertex, edge_list]
             if vertex not in edge_list and sum(extract) == len(extract):
+                print(vertex, edge_list)
                 edge_list.append(vertex)
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
 
     hidden_weight = get_hidden_weight_matrix(n+1)
     for row_idx in range(0, n_plus_power):
         row = hidden_weight[row_idx, :]
-        edge_list = np.where(row>0)[0]
+        edge_list = list(np.where(row>0)[0])
+        for vertex in range(n_power):
+            extract = full_weight[vertex, edge_list]
+            if vertex not in edge_list and sum(extract) == len(extract):
+                edge_list.append(vertex)
+                print(row_idx, edge_list)
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
     model += (V[0]==1)
     model += (V[n_power-1]==1)
@@ -62,5 +68,5 @@ def hidden_lp(n, verbose=False, binary=False):
 if __name__ == "__main__":
     # for binary in [False, True]:
     for binary in [False]:
-        for n in range(4, 10):
+        for n in range(3, 4):
             hidden_lp(n, verbose=False, binary=binary)
