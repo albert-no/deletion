@@ -23,17 +23,17 @@ def hidden_lp(n, verbose=False, binary=False):
 
     model += (pulp.lpSum(V))
     
+    # wlog, maximum independent set contains all zeros and all ones
+    model += (V[0]==1)
+    model += (V[n_power-1]==1)
+
     hidden_weight = get_hidden_weight_matrix(n)
     full_weight = get_weight_matrix(n)
 
     for col_idx in range(n_minus_power):
         col = hidden_weight[:, col_idx]
         edge_list = list(np.where(col>0)[0])
-        for vertex in range(n_power):
-            extract = full_weight[vertex, edge_list]
-            if vertex not in edge_list and sum(extract) == len(extract):
-                print(vertex, edge_list)
-                edge_list.append(vertex)
+        # clique size can not be larger than n+1
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
 
     hidden_weight = get_hidden_weight_matrix(n+1)
@@ -44,10 +44,7 @@ def hidden_lp(n, verbose=False, binary=False):
             extract = full_weight[vertex, edge_list]
             if vertex not in edge_list and sum(extract) == len(extract):
                 edge_list.append(vertex)
-                print(row_idx, edge_list)
         model += (pulp.lpSum([V[idx] for idx in edge_list]) <= 1)
-    model += (V[0]==1)
-    model += (V[n_power-1]==1)
 
     print(f'n = {n}, Solving LP')
     model.solve()
@@ -66,7 +63,6 @@ def hidden_lp(n, verbose=False, binary=False):
 
 
 if __name__ == "__main__":
-    # for binary in [False, True]:
-    for binary in [False]:
-        for n in range(3, 4):
+    for binary in [False, True]:
+        for n in range(3, 12):
             hidden_lp(n, verbose=False, binary=binary)
