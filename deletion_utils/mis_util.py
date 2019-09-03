@@ -56,6 +56,24 @@ def get_vt0(n, reverse=False, numeric=True):
     return vt0
 
 
+def get_vt_else(n, reverse=False, numeric=True):
+    n_array = get_binary_array(n)
+    vt_else_idx = [compute_vt_sum(bin_str, reverse)!=0 for bin_str in n_array]
+    vt_else = n_array[vt_else_idx]
+    if numeric:
+        vt_else = v_bin_to_num(vt_else)
+    return vt_else
+
+
+def get_vt_general(n, vt_num, reverse=False, numeric=True):
+    n_array = get_binary_array(n)
+    vt_general_idx = [(compute_vt_sum(bin_str, reverse) in vt_num) for bin_str in n_array]
+    vt_general = n_array[vt_general_idx]
+    if numeric:
+        vt_general = v_bin_to_num(vt_general)
+    return vt_general
+
+
 def write_weight_result(f, name, mis, node_weight):
     sel = node_weight[mis]
     f.write(f'{name}: {sum(sel)}\n')

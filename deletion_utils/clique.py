@@ -1,4 +1,4 @@
-# findclique.py
+# clique.py
 import numpy as np
 import itertools
 
