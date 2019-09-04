@@ -23,8 +23,7 @@ def hidden_lp(n, verbose=False, binary=False):
     model += (pulp.lpSum(V))
     
     model += (V[0] == 1)
-    model += (V[n_power-2] == 1)
-    model += (V[n_minus_power+1] == 1)
+    model += (V[n_power-1] == 1)
 
     hidden_weight = get_hidden_weight_matrix(n)
     for col_idx in range(0, n_minus_power):
