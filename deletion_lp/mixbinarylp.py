@@ -18,52 +18,63 @@ def hidden_lp(n, verbose=False, binary=False):
     model = LpProblem("Hidden LP", LpMaximize)
 
     n_power_list = list(range(n_power))
-    # vt0 = random.sample(n_power_list, 3*n+1)
 
-    # vt0 = get_vt_general(n, [0, n//2])
-    vt0 = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= (n+1)]
-    vt_else = [i for i in range(n_power) if i not in vt0]
+    # v_bin = get_vt_general(n, [0, n//2])
+    # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) in [0, n]]
+    # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= n+1 or compute_vt_sum(num_to_bin(i, n), raw=True)>=(n-2)*(n+1)//2]
+    k = 3
+    v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
+    compare = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) == 0 and compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
 
-    VT0 = LpVariable.dicts("VT0", [i for i in vt0], lowBound=0, cat='Binary')
-    VTELSE = LpVariable.dicts("VTELSE", [i for i in vt_else], lowBound=0)
+    # v_else = [i for i in range(n_power) if i not in v_bin]
+    v_else = []
+    Vbin = [i for i in v_bin]
+    Velse = [i for i in v_else]
 
-    model += (pulp.lpSum(VT0)+pulp.lpSum(VTELSE))
+    VBIN = LpVariable.dicts("VBIN", [i for i in v_bin], lowBound=0, cat='Binary')
+    VELSE = LpVariable.dicts("VELSE", [i for i in v_else], lowBound=0, upBound=1)
+
+    model += (pulp.lpSum(VBIN)+pulp.lpSum(VELSE))
     
-    if 0 in vt0:
-        model += (VT0[0] == 1)
+    if 0 in v_bin:
+        model += (VBIN[0] == 1)
     else:
-        model += (VTELSE[0] == 1)
+        model += (VELSE[0] == 1)
 
-    if n_power-1 in vt0:
-        model += (VT0[n_power-1] == 1)
-    else:
-        model += (VTELSE[n_power-1] == 1)
-    
-    # if n in vt0:
-    #     model += (VT0[n] == 0)
+    # if n_power-1 in v_bin:
+    #     model += (VBIN[n_power-1] == 1)
     # else:
-    #     model += (VTELSE[n] == 0)
+    #     model += (VELSE[n_power-1] == 1)
 
     hidden_weight = get_hidden_weight_matrix(n)
     for col_idx in range(0, n_minus_power):
         col = hidden_weight[:, col_idx]
         edge_list = np.where(col>0)[0]
-        vt0_list = [edge for edge in edge_list if edge in vt0]
-        vt_else_list = [edge for edge in edge_list if edge in vt_else]
-        model += ((pulp.lpSum([VT0[idx] for idx in vt0_list])+pulp.lpSum([VTELSE[idx] for idx in vt_else_list])) <= 1)
+        v_bin_list = [edge for edge in edge_list if edge in v_bin]
+        v_else_list = [edge for edge in edge_list if edge in v_else]
+        model += ((pulp.lpSum([VBIN[idx] for idx in v_bin_list])+pulp.lpSum([VELSE[idx] for idx in v_else_list])) <= 1)
 
     hidden_weight = get_hidden_weight_matrix(n+1)
     for row_idx in range(0, n_plus_power):
         row = hidden_weight[row_idx, :]
         edge_list = np.where(row>0)[0]
-        vt0_list = [edge for edge in edge_list if edge in vt0]
-        vt_else_list = [edge for edge in edge_list if edge in vt_else]
-        model += ((pulp.lpSum([VT0[idx] for idx in vt0_list])+pulp.lpSum([VTELSE[idx] for idx in vt_else_list])) <= 1)
+        v_bin_list = [edge for edge in edge_list if edge in v_bin]
+        v_else_list = [edge for edge in edge_list if edge in v_else]
+        model += ((pulp.lpSum([VBIN[idx] for idx in v_bin_list])+pulp.lpSum([VELSE[idx] for idx in v_else_list])) <= 1)
+
+    # add clique constraint
+    # cliques = findclique(n)
+    # for clique in cliques:
+    #     clique_bin = [edge for edge in clique if edge in v_bin]
+    #     clique_else = [edge for edge in clique if edge in v_else]
+    #     model += ((pulp.lpSum([VBIN[idx] for idx in clique_bin])+pulp.lpSum([VELSE[idx] for idx in clique_else])) <= 1)
 
     print(f'n = {n}, Solving LP')
     model.solve()
     opt = value(model.objective)
     print(f'n={n}, opt={opt}, binary={binary}, status: {LpStatus[model.status]}')
+    print(f'target = {len(compare)}')
+    print(' ')
 
     if verbose:
         cnt = 0
@@ -79,5 +90,5 @@ def hidden_lp(n, verbose=False, binary=False):
 
 if __name__ == "__main__":
     for binary in [False]:
-        for n in range(5, 11):
+        for n in range(11, 16):
             hidden_lp(n, verbose=False, binary=binary)
