@@ -22,12 +22,13 @@ def hidden_lp(n, verbose=False, binary=False):
     # v_bin = get_vt_general(n, [0, n//2])
     # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) in [0, n]]
     # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= n+1 or compute_vt_sum(num_to_bin(i, n), raw=True)>=(n-2)*(n+1)//2]
-    k = 3
+    k = 4
     v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
     compare = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) == 0 and compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
 
     # v_else = [i for i in range(n_power) if i not in v_bin]
     v_else = []
+    v_else = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) > k*(n+1) and compute_vt_sum(num_to_bin(i, n), raw=True) < (k+2)*(n+1)]
     Vbin = [i for i in v_bin]
     Velse = [i for i in v_else]
 
@@ -90,5 +91,5 @@ def hidden_lp(n, verbose=False, binary=False):
 
 if __name__ == "__main__":
     for binary in [False]:
-        for n in range(11, 16):
+        for n in range(11, 14):
             hidden_lp(n, verbose=False, binary=binary)
