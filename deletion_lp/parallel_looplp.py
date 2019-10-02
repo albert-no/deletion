@@ -6,6 +6,7 @@ import time
 from deletion_utils.bin_num_util import bin_to_num, num_to_bin
 from deletion_utils.mis_util import *
 from deletion_utils.clique import *
+from deletion_lp.node_from_parallel import NODES
 
 from pulp import *
 
@@ -96,24 +97,14 @@ def loop_lp(n, verbose=False, v_bin=[0], v_zeros=[1], v_ones=[0]):
 
 
 if __name__ == "__main__":
-    n = 11
+    n = 12
     zeros = ([np.power(2, i) for i in range(n)]
             + [np.power(2, n)-1-np.power(2, i) for i in range(n)])
-    binary = [216, 1702, 1236, 1140, 1678, 1050, 154, 105, 538,
-            1701, 1941, 532, 907, 1335, 1194, 1515, 1942, 1366,
-            688, 1200, 1365, 682, 854, 778, 340, 576, 847,
-            1851, 853, 1300, 537, 322, 70, 681, 556, 1359,
-            1749, 196, 1755, 1707, 1709, 1533, 1371, 1539, 667,
-            1306, 1750, 514, 1708, 1323, 811, 724, 1706, 756,
-            603, 1440, 1878, 1370, 938, 1364, 683, 842, 378,
-            1354]
+    # binary = NODES
+    binary = []
     cnt = len(binary)
     ones = [0, np.power(2, n)-1]
-    vt0 = get_vt0(n)
-    target = len(vt0) + 1
-    current_opt = target+1
     while True:
-    # while current_opt >= target:
         cnt += 1
         print(' ')
         print(f'{cnt}-th loop')

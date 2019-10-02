@@ -56,6 +56,12 @@ def get_vt0(n, reverse=False, numeric=True):
     return vt0
 
 
+def get_vt_sum_array(n):
+    n_bin_array = get_binary_array(n)
+    vt_sum_array = v_compute_vt_sum(n_bin_array, raw=True)
+    return vt_sum_array
+
+
 def get_vt_else(n, reverse=False, numeric=True):
     n_array = get_binary_array(n)
     vt_else_idx = [compute_vt_sum(bin_str, reverse)!=0 for bin_str in n_array]
