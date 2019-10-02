@@ -1,4 +1,4 @@
-# mixbinarylp.py
+# parallel_mixbinarylp.py
 import numpy as np
 import random
 
@@ -72,7 +72,8 @@ def hidden_lp(n, verbose=False):
     #     model += ((pulp.lpSum([VBIN[idx] for idx in clique_bin])+pulp.lpSum([VELSE[idx] for idx in clique_else])) <= 1)
 
     print(f'n = {n}, Solving LP')
-    model.solve()
+    solver = solvers.COIN_CMD('cbc', threads=28, msg=1, fracGap=0.001)
+    model.solve(solver)
     opt = value(model.objective)
     print(f'n={n}, opt={opt}, status: {LpStatus[model.status]}')
     # print(f'target = {len(compare)}')

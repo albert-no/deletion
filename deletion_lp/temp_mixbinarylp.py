@@ -24,7 +24,7 @@ def hidden_lp(n, verbose=False):
     # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= n+1 or compute_vt_sum(num_to_bin(i, n), raw=True)>=(n-2)*(n+1)//2]
     # k = 4
     # v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
-    v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) == 0 or compute_vt_sum(num_to_bin(i, n)) == 1]
+    v_bin = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) == 0 or compute_vt_sum(num_to_bin(i, n), raw=True)<= n*(n+1)//4]
     # compare = [i for i in range(n_power) if compute_vt_sum(num_to_bin(i, n)) == 0 and compute_vt_sum(num_to_bin(i, n), raw=True) <= k*(n+1)]
 
     v_else = [i for i in range(n_power) if i not in v_bin]
